@@ -1,0 +1,181 @@
+classDiagram
+    class Pista {
+        -String numero_identificativo
+        -int max_capacidad
+
+        +crear()
+        +verificarEstadoPista()
+    }
+
+    class EstadoPista {
+        -String nombre
+        -String descripcion
+    }
+
+    class HistorialEstadoPista{
+        -String fecha_hora_inicio
+        -datetime fecha_hora_fin
+        -estado estado
+    }
+
+    class Cliente {
+        -int num_cliente
+        -String Nombre
+        -String direccion
+        -int num_telefono
+        -email correo
+        -pedidos listapedidos
+
+        +crear()
+        +hacerReserva()
+    }  
+
+    class Reserva {
+        -Date dia_reserva
+        -Time hora_reserva
+
+        +crear()
+        +mostrar()
+        +cancelar()
+        +calcularCostoTotal()
+        +cobrarCostoTotal()
+        +verificarEstadoReserva()
+    }
+
+    class EstadoReserva {
+        -String nombre
+        -String descripcion
+    }
+
+    class HistorialEstadoReserva {
+        -datetime fecha_hora_inicio
+        -datetime fecha_hora_fin
+        -estado estado
+    }
+
+    class Menu {
+        -String nombre
+        -String descripcion
+        -Float precio
+
+        +crear()
+        +mostrar()
+    }
+
+    class ProductoMenu{
+        -float precio
+        -String productoMenu
+    }
+
+    class Producto {
+        -String nombre
+        -String descripcion
+        -Float precio
+
+        +ActulizarPrecioProducto()
+    }
+
+    class Pedido {
+        -String descripcion
+        -pedidos listapedidos
+        -datetime hora
+
+        +crear()
+        +cancelar()
+        +registrarpedido()
+    }
+
+    class DetallePedido {
+        -Reserva reserva
+        -Pedido pedido
+        -String descripcion
+
+        +crear()
+    }
+
+    class PrecioProducto {
+        -float precio
+        -date fecha_vigencia
+
+        +verificarPrecioProducto()
+    }
+
+    class AsignacionPedido {
+        -String descripcion
+        -int precio
+
+        +verificaEleccionPedido()
+        +obetnerPrecio()
+    }
+
+    class Partida {
+        -String identificador_unico
+        -String descripcion
+        
+        +crear()
+        +cancelarPartida()
+        +calcularPuntajeTotal()
+        +calcularCantidadJugadores()
+    }
+
+    class Fila {
+        -String identificador_unico
+        -String nombre
+        -turnos listaturnos
+
+        +crear()
+        +verificarListaTurnos()
+    }
+
+    class Turno {
+        -String descripcion
+        -tirada listatiradas
+
+        +crear()
+        +Calcularpinostotales()
+        +verificarPosicion()
+        +verificarListaTiradas()
+    }
+
+    class DetalleTurno {
+        -String nombre
+        -String descripcion
+        -posicion listaposicion
+
+        +calcularTurno()
+    }
+
+    class Tirada {
+        -String descripcion
+        -int pinos_derribados
+
+        +crear()    
+    }
+
+
+Cliente --> Reserva
+Pedido --> DetallePedido
+
+Reserva --> Pista
+Reserva --> HistorialEstadoReserva
+
+AsignacionPedido --> Menu
+AsignacionPedido --> Producto
+Pedido --> AsignacionPedido
+
+Partida --> Fila
+Fila --> Turno
+Turno --> DetalleTurno
+DetalleTurno --> Tirada
+
+HistorialEstadoReserva --> EstadoReserva
+
+Pista --> HistorialEstadoPista
+HistorialEstadoPista --> EstadoPista
+
+Reserva --> Partida
+Reserva <-- DetallePedido
+
+Producto --> PrecioProducto
+
+
