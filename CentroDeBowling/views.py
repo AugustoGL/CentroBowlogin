@@ -22,6 +22,7 @@ def signup(request):
                 user = User.objects.create_user(username=request.POST['username'], 
                 password=request.POST['password1'])
                 user.save()
+                print(user.pk, "--------"*10)
                 login(request, user)
                 return redirect('reserva')
             except IntegrityError:
@@ -29,6 +30,7 @@ def signup(request):
                     'form': UserCreationForm,
                     "error": 'Usuario ya existente'
                 })
+            
         return render (request, 'signup.html', {
             'form': UserCreationForm,
             "error": 'Contra no coinciden'
@@ -38,34 +40,31 @@ def signup(request):
 
 def reserva(request):
     horarios = Horarios.objects.all()
-    for horario in horarios:
-        print(horario.horario)
-    print(horarios, "--------"*10)
     if request.method == 'POST':
+        print("POST"*8)
         dia_reserva = request.POST.get('dia_reserva')
         hora_reserva_id = request.POST.get('hora_reserva')
         nombres_personas = request.POST.getlist('nombre_persona[]')
         codigos_personas = request.POST.getlist('codigo_persona[]')
 
+       
         fecha_reserva = datetime.strptime(dia_reserva, '%Y-%m-%d').date()
-        hora_reserva = Horarios.objects.get(id=hora_reserva_id).horario
-
         pista = Pista.objects.filter(estado__estado='Disponible').first()
         if not pista:
-            return render(request, 'rev.html', {'error': 'No hay pistas disponibles en este momento'})
-
+            return render(request, 'rev.html', {'horarios': horarios,})
+        print("arranca","*********"*5)
+        usuario = User.objects.get(id=request.user.pk)
         reserva = Reserva.objects.create(
+            usuario=usuario,
             dia_reserva=fecha_reserva,
             hora_reserva=Horarios.objects.get(id=hora_reserva_id),
             pista=pista
         )
-
-        # Crear instancias de Jugador y asociarlas a la reserva
+        print("o no arranca")
         for nombre, codigo in zip(nombres_personas, codigos_personas):
             jugador = Jugador.objects.create(nombre=nombre, resumido=codigo)
             reserva.jugadores.add(jugador)
 
-        # Cambiar el estado de la pista a "Reservada"
         pista.estado = EstadoPista.objects.get(estado='Reservada')
         pista.save()
 

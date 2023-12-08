@@ -1,10 +1,20 @@
 from django.db import models
 
-class EstadoPista(models.Model):
-    estado = models.CharField(max_length=100, default="Disponible")
+
+
+class Horarios(models.Model):
+    horario = models.TimeField()
 
     def __str__(self):
-        return self.estado
+        return str(self.horario)
+
+class EstadoPista(models.Model):
+    estado = models.CharField(max_length=100, default="Disponible")
+    horario = models.ForeignKey('Horarios', on_delete=models.CASCADE, default=None, null=True)
+
+    def __str__(self):
+        return f"{self.horario} - {self.estado}"
+
 
 class EstadoReserva(models.Model):
     estado = models.CharField(max_length=100, default="Reservada")
@@ -14,16 +24,10 @@ class EstadoReserva(models.Model):
 
 class Pista(models.Model):
     nombre = models.CharField(max_length=100)
-    estado = models.ForeignKey(EstadoPista, on_delete=models.CASCADE, default=EstadoPista.objects.get(estado="Disponible").id)
+    estado = models.ForeignKey(EstadoPista, on_delete=models.CASCADE, default=1)  # Cambia el valor por el ID correcto
 
     def __str__(self):
         return self.nombre
-
-class Horarios(models.Model):
-    horario = models.TimeField()
-
-    def __str__(self):
-        return str(self.horario)
 
 class Jugador(models.Model):
     nombre = models.CharField(max_length=255)
@@ -33,6 +37,7 @@ class Jugador(models.Model):
         return self.nombre
 
 class Reserva(models.Model):
+    usuario = models.IntegerField(default=0)
     dia_reserva = models.DateField()
     hora_reserva = models.ForeignKey(Horarios, on_delete=models.CASCADE)
     jugadores = models.ManyToManyField(Jugador)
