@@ -74,10 +74,10 @@ def reserva(request):
             for nombre, codigo in zip(nombres_personas, codigos_personas):
                 jugador = Jugador.objects.create(nombre=nombre, resumido=codigo)
                 reserva.jugadores.add(jugador)
-
+            """""""""
             pista_disponible.estado = EstadoPista.objects.get(estado='Reservada', horario__id=hora_reserva_id)
             pista_disponible.save()
-
+            """""""""
         except IntegrityError:
             # Manejar la excepción, por ejemplo, mostrar un mensaje de error o redirigir a una página de error
             return HttpResponse('Error al crear la reserva')
