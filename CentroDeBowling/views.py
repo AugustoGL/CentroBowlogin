@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from .forms import ReservaForm
+from datetime import datetime
 
 
 def home(request):
@@ -34,26 +35,44 @@ def signup(request):
         })
 
 
-def reserva(request):
-    return render(request, 'rev.html')
 
-def create_reserva(request):
-    if request.method == 'GET':
-        return render(request, 'c_rev.html',{
-        'form': ReservaForm
-    })
+def reserva(request):
+    horarios = Horarios.objects.all()
+    for horario in horarios:
+        print(horario.horario)
+    print(horarios, "--------"*10)
+    if request.method == 'POST':
+        dia_reserva = request.POST.get('dia_reserva')
+        hora_reserva_id = request.POST.get('hora_reserva')
+        nombres_personas = request.POST.getlist('nombre_persona[]')
+        codigos_personas = request.POST.getlist('codigo_persona[]')
+
+        fecha_reserva = datetime.strptime(dia_reserva, '%Y-%m-%d').date()
+        hora_reserva = Horarios.objects.get(id=hora_reserva_id).horario
+
+        pista = Pista.objects.filter(estado__estado='Disponible').first()
+        if not pista:
+            return render(request, 'rev.html', {'error': 'No hay pistas disponibles en este momento'})
+
+        reserva = Reserva.objects.create(
+            dia_reserva=fecha_reserva,
+            hora_reserva=Horarios.objects.get(id=hora_reserva_id),
+            pista=pista
+        )
+
+        # Crear instancias de Jugador y asociarlas a la reserva
+        for nombre, codigo in zip(nombres_personas, codigos_personas):
+            jugador = Jugador.objects.create(nombre=nombre, resumido=codigo)
+            reserva.jugadores.add(jugador)
+
+        # Cambiar el estado de la pista a "Reservada"
+        pista.estado = EstadoPista.objects.get(estado='Reservada')
+        pista.save()
+
+        return render(request, 'home.html')
     else:
-        try:
-            form = ReservaForm(request.POST)
-            new_reserva = form.save(commit=False)
-            new_reserva.user = request.user
-            new_reserva.save()
-            return redirect('reserva')
-        except ValueError:
-            return render(request, 'c_rev.html',{
-                'form': ReservaForm,
-                "error": 'Datos no validos'
-            })
+       return render(request, 'rev.html', {'horarios': horarios})
+
 
     
 

@@ -1,5 +1,82 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>reserva</h1>
+<body>
+
+    <h2>Formulario de Reserva de Bowling</h2>
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        
+        <label for="cantidad_personas">Cantidad de Personas (máximo 6):</label>
+        <select id="cantidad_personas" name="cantidad_personas" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
+        <br>
+
+        <div id="nombres_personas">
+            <!-- Este div se llenará dinámicamente con campos para los nombres y códigos -->
+        </div>
+
+        <br>
+        <label for="hora_reserva">Hora de la Reserva:</label>
+        <select id="hora_reserva" name="hora_reserva" required>
+            {% for horario in horarios %}
+                <option value="{{ horario.id }}">{{ horario.horario }} hs </option>
+            {% endfor %}
+        </select>
+           
+        <br>
+
+        <label for="dia_reserva">Día de la Reserva:</label>
+        <input type="date" id="dia_reserva" name="dia_reserva" required>
+        <br>
+
+        <input type="submit" value="Enviar Reserva">
+    </form>
+
+    <script>
+    document.getElementById('cantidad_personas').addEventListener('change', function() {
+            var cantidadPersonas = this.value;
+            var nombresPersonasDiv = document.getElementById('nombres_personas');
+
+            // Limpiar div antes de agregar nuevos campos
+            nombresPersonasDiv.innerHTML = '';
+
+            // Generar campos para los nombres y códigos según la cantidad de personas
+            for (var i = 1; i <= cantidadPersonas && i <= 6; i++) {
+                var labelNombre = document.createElement('label');
+                labelNombre.innerHTML = 'Nombre de la Persona ' + i + ':';
+    
+                var inputNombre = document.createElement('input');
+                inputNombre.type = 'text';
+                inputNombre.name = 'nombre_persona[]'; // Utilizamos un array para manejar múltiples nombres
+                inputNombre.required = true;
+    
+                var labelCodigo = document.createElement('label');
+                labelCodigo.innerHTML = 'Código de 3 caracteres:';
+    
+                var inputCodigo = document.createElement('input');
+                inputCodigo.type = 'text';
+                inputCodigo.name = 'codigo_persona[]'; // Utilizamos un array para manejar múltiples códigos
+                inputCodigo.maxLength = 3;
+                inputCodigo.required = true;
+    
+                nombresPersonasDiv.appendChild(labelNombre);
+                nombresPersonasDiv.appendChild(inputNombre);
+                nombresPersonasDiv.appendChild(document.createElement('br'));
+                nombresPersonasDiv.appendChild(labelCodigo);
+                nombresPersonasDiv.appendChild(inputCodigo);
+                nombresPersonasDiv.appendChild(document.createElement('br'));
+            }
+        });
+    </script>
+    
+
+</body>
 {% endblock %}

@@ -1,27 +1,46 @@
 from django.db import models
 
-# Create your models here.
+class EstadoPista(models.Model):
+    estado = models.CharField(max_length=100, default="Disponible")
+
+    def __str__(self):
+        return self.estado
+
+class EstadoReserva(models.Model):
+    estado = models.CharField(max_length=100, default="Reservada")
+
+    def __str__(self):
+        return self.estado
 
 class Pista(models.Model):
-    numero_identificativo = models.CharField(max_length=50)
-    max_capacidad = models.IntegerField()
+    nombre = models.CharField(max_length=100)
+    estado = models.ForeignKey(EstadoPista, on_delete=models.CASCADE, default=EstadoPista.objects.get(estado="Disponible").id)
 
-    def crear(self):
-        # Implementa la lógica para crear una pista
-        pass
+    def __str__(self):
+        return self.nombre
 
-    def verificarEstadoPista(self):
-        # Implementa la lógica para verificar el estado de la pista
-        pass
+class Horarios(models.Model):
+    horario = models.TimeField()
 
-class EstadoPista(models.Model):
-    nombre = models.CharField(max_length=50)
-    descripcion = models.TextField()
+    def __str__(self):
+        return str(self.horario)
 
-class HistorialEstadoPista(models.Model):
-    fecha_hora_inicio = models.CharField(max_length=50)
-    fecha_hora_fin = models.DateTimeField()
-    estado = models.ForeignKey(EstadoPista, on_delete=models.CASCADE)
+class Jugador(models.Model):
+    nombre = models.CharField(max_length=255)
+    resumido = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.nombre
+
+class Reserva(models.Model):
+    dia_reserva = models.DateField()
+    hora_reserva = models.ForeignKey(Horarios, on_delete=models.CASCADE)
+    jugadores = models.ManyToManyField(Jugador)
+    pista = models.ForeignKey(Pista, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Reserva {self.id}"
+
 
 class Cliente(models.Model):
     num_cliente = models.IntegerField()
@@ -38,44 +57,6 @@ class Cliente(models.Model):
     def hacerReserva(self):
         # Implementa la lógica para hacer una reserva
         pass
-
-class Reserva(models.Model):
-    dia_reserva = models.DateField()
-    hora_reserva =   models.TimeField()
-
-    def crear(self):
-        # Implementa la lógica para crear una reserva
-        pass
-
-    def mostrar(self):
-        # Implementa la lógica para mostrar la reserva
-        pass
-
-    def cancelar(self):
-        # Implementa la lógica para cancelar la reserva
-        pass
-
-    def calcularCostoTotal(self):
-        # Implementa la lógica para calcular el costo total de la reserva
-        pass
-
-    def cobrarCostoTotal(self):
-        # Implementa la lógica para cobrar el costo total de la reserva
-        pass
-
-    def verificarEstadoReserva(self):
-        # Implementa la lógica para verificar el estado de la reserva
-        pass
-
-class EstadoReserva(models.Model):
-    nombre = models.CharField(max_length=50)
-    descripcion = models.TextField()
-
-class HistorialEstadoReserva(models.Model):
-    fecha_hora_inicio = models.DateTimeField()
-    fecha_hora_fin = models.DateTimeField()
-    estado = models.ForeignKey(EstadoReserva, on_delete=models.CASCADE)
-
 class Menu(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
@@ -166,55 +147,6 @@ class Partida(models.Model):
 
     def calcularCantidadJugadores(self):
         # Implementa la lógica para calcular la cantidad de jugadores en la partida
-        pass
-
-class Fila(models.Model):
-    identificador_unico = models.CharField(max_length=50)
-    nombre = models.CharField(max_length=100)
-    listaturnos = models.ManyToManyField('Turno')
-
-    def crear(self):
-        # Implementa la lógica para crear una fila
-        pass
-
-    def verificarListaTurnos(self):
-        # Implementa la lógica para verificar la lista de turnos
-        pass
-
-class Turno(models.Model):
-    descripcion = models.TextField()
-    listatiradas = models.ManyToManyField('Tirada')
-
-    def crear(self):
-        # Implementa la lógica para crear un turno
-        pass
-
-    def Calcularpinostotales(self):
-        # Implementa la lógica para calcular los pinos totales en un turno
-        pass
-
-    def verificarPosicion(self):
-        # Implementa la lógica para verificar la posición en el turno
-        pass
-
-    def verificarListaTiradas(self):
-        # Implementa la lógica para verificar la lista de tiradas en el turno
-        pass
-
-class DetalleTurno(models.Model):
-    nombre = models.CharField(max_length=100)
-    descripcion = models.TextField()
-
-    def calcularTurno(self):
-        # Implementa la lógica para calcular un turno
-        pass
-
-class Tirada(models.Model):
-    descripcion = models.TextField()
-    pinos_derribados = models.IntegerField()
-
-    def crear(self):
-        # Implementa la lógica para registrar una tirada
         pass
 
 
