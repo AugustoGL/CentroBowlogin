@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from .forms import ReservaForm
 from datetime import datetime
-
+from django.http import HttpResponse
 
 def home(request):
     return render(request,'home.html')
@@ -36,45 +36,62 @@ def signup(request):
             "error": 'Contra no coinciden'
         })
 
-
+from django.db import IntegrityError
 
 def reserva(request):
-    horarios = Horarios.objects.all()
     if request.method == 'POST':
-        print("POST"*8)
+        print("POST" * 8)
         dia_reserva = request.POST.get('dia_reserva')
         hora_reserva_id = request.POST.get('hora_reserva')
         nombres_personas = request.POST.getlist('nombre_persona[]')
         codigos_personas = request.POST.getlist('codigo_persona[]')
 
-       
         fecha_reserva = datetime.strptime(dia_reserva, '%Y-%m-%d').date()
-        pista = Pista.objects.filter(estado__estado='Disponible').first()
-        if not pista:
-            return render(request, 'rev.html', {'horarios': horarios,})
-        print("arranca","*********"*5)
-        usuario = User.objects.get(id=request.user.pk)
-        reserva = Reserva.objects.create(
-            usuario=usuario,
-            dia_reserva=fecha_reserva,
-            hora_reserva=Horarios.objects.get(id=hora_reserva_id),
-            pista=pista
-        )
-        print("o no arranca")
-        for nombre, codigo in zip(nombres_personas, codigos_personas):
-            jugador = Jugador.objects.create(nombre=nombre, resumido=codigo)
-            reserva.jugadores.add(jugador)
 
-        pista.estado = EstadoPista.objects.get(estado='Reservada')
-        pista.save()
+
+        """""""""
+        pista_disponible = Pista.objects.filter(
+            estado__estado='Disponible',
+            estado__horario__id=hora_reserva_id
+        ).first()
+
+        if not pista_disponible:
+            return HttpResponse('No hay pistas disponibles')
+        """""""""
+
+        print("arranca", "*********"*5)
+        usuario = User.objects.get(id=request.user.pk)
+
+        # Capturar excepciones de integridad para manejar casos en los que la transacción falle
+        try:
+            reserva = Reserva.objects.create(
+                usuario=usuario,
+                dia_reserva=fecha_reserva,
+                hora_reserva=Horarios.objects.get(id=hora_reserva_id),
+                pista=pista_disponible
+            )
+
+            for nombre, codigo in zip(nombres_personas, codigos_personas):
+                jugador = Jugador.objects.create(nombre=nombre, resumido=codigo)
+                reserva.jugadores.add(jugador)
+
+            pista_disponible.estado = EstadoPista.objects.get(estado='Reservada', horario__id=hora_reserva_id)
+            pista_disponible.save()
+
+        except IntegrityError:
+            # Manejar la excepción, por ejemplo, mostrar un mensaje de error o redirigir a una página de error
+            return HttpResponse('Error al crear la reserva')
 
         return render(request, 'home.html')
     else:
-       return render(request, 'rev.html', {'horarios': horarios})
+        horarios = Horarios.objects.all()
+        return render(request, 'rev.html', {'horarios': horarios})
 
 
-    
-
+def reservas(request, pk):
+    reservas = Reserva.objects.filter(usuario=pk)
+    print(reservas)
+    return HttpResponse(reservas)
 
 def login_view(request):
     if request.method == 'GET':

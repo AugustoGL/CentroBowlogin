@@ -27,7 +27,7 @@
         <label for="hora_reserva">Hora de la Reserva:</label>
         <select id="hora_reserva" name="hora_reserva" required>
             {% for horario in horarios %}
-                <option value="{{ horario.id }}">{{ horario.horario }} hs </option>
+                <option value="{{ horario.id }}">{{ horario.horario|time:"H:i" }} hs</option>
             {% endfor %}
         </select>
            
