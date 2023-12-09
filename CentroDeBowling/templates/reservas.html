@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% if reservas%}
+        <h1> Tus reservas</h1>
+        {% for i in reservas %}
+            <div class="reserva">
+                <h2>{{ i.dia_reserva }} - {{ i.hora_reserva }}</h2>
+                <div> 
+                    <h3>Personas</h3>
+                    {% for jugador in i.jugadores.all %}
+                        <p>{{ jugador.nombre }}</p>
+                    {% endfor %}   
+                </div>
+                <a href="{% url 'reserva' pk=i.pk %}">Más</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h2>No hay reservas</h2>
+    {% endif %}
+{% endblock %}

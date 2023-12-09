@@ -42,6 +42,7 @@ class Reserva(models.Model):
     hora_reserva = models.ForeignKey(Horarios, on_delete=models.CASCADE)
     jugadores = models.ManyToManyField(Jugador)
     pista = models.ForeignKey(Pista, on_delete=models.CASCADE)
+    estado_reserva = models.ForeignKey(EstadoReserva, on_delete=models.CASCADE, default=1, null=True)
 
     def __str__(self):
         return f"Reserva {self.id}"

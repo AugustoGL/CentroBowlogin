@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h2>Reserva para el dia {{ reserva.dia_reserva }}</h2>
+    <h3>Reserva en la hora {{ reserva.hora_reserva}}</h3>
+    <div class="jugadores">
+        <h3>Jugadores</h3>
+        {% for jugador in reserva.jugadores.all %}
+            <p>{{ jugador.nombre }}, {{ jugador.resumido}}</p>
+        {% endfor %}
+    </div>
+    <br>
+    <h4>Estado de la reserva {{reserva.estado_reserva}}</h4>
+    {% if reserva.estado_reserva.pk == 1%}
+        <form action=""  method="post">
+            {% csrf_token %}
+            <button>Cancelar reserva</button>
+        </form>
+    {% endif %}
+{% endblock %}

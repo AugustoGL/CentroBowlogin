@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from .forms import ReservaForm
 from datetime import datetime
 from django.http import HttpResponse
+from django.db import IntegrityError
 
 def home(request):
     return render(request,'home.html')
@@ -36,9 +37,15 @@ def signup(request):
             "error": 'Contra no coinciden'
         })
 
-from django.db import IntegrityError
 
-def reserva(request):
+def reservas(request, pk):
+    reservas = Reserva.objects.filter(usuario=pk)
+    print(reservas)
+    for jugadores in reservas:
+        print(jugadores.jugadores.all())
+    return render(request, 'reservas.html', {'reservas': reservas}) 
+
+def reservar(request):
     if request.method == 'POST':
         print("POST" * 8)
         dia_reserva = request.POST.get('dia_reserva')
@@ -49,23 +56,21 @@ def reserva(request):
         fecha_reserva = datetime.strptime(dia_reserva, '%Y-%m-%d').date()
 
 
-        """""""""
+        
         pista_disponible = Pista.objects.filter(
             estado__estado='Disponible',
-            estado__horario__id=hora_reserva_id
         ).first()
 
+        """""""""
         if not pista_disponible:
             return HttpResponse('No hay pistas disponibles')
         """""""""
 
-        print("arranca", "*********"*5)
         usuario = User.objects.get(id=request.user.pk)
-
         # Capturar excepciones de integridad para manejar casos en los que la transacción falle
         try:
             reserva = Reserva.objects.create(
-                usuario=usuario,
+                usuario=usuario.pk,
                 dia_reserva=fecha_reserva,
                 hora_reserva=Horarios.objects.get(id=hora_reserva_id),
                 pista=pista_disponible
@@ -82,16 +87,20 @@ def reserva(request):
             # Manejar la excepción, por ejemplo, mostrar un mensaje de error o redirigir a una página de error
             return HttpResponse('Error al crear la reserva')
 
-        return render(request, 'home.html')
+        return redirect('reservas', pk=usuario.pk)
     else:
         horarios = Horarios.objects.all()
-        return render(request, 'rev.html', {'horarios': horarios})
+        return render(request, 'reservar.html', {'horarios': horarios})
 
 
-def reservas(request, pk):
-    reservas = Reserva.objects.filter(usuario=pk)
-    print(reservas)
-    return HttpResponse(reservas)
+
+def reserva(request, pk):
+    reserva = Reserva.objects.get(id=pk)
+    usuario = User.objects.get(id=reserva.usuario)
+    if request.method == 'POST':
+        reserva.estado_reserva = EstadoReserva.objects.get(pk=2)
+        reserva.save()
+    return render(request, 'reserva.html', {'reserva': reserva, 'usuario': usuario})
 
 def login_view(request):
     if request.method == 'GET':
@@ -108,7 +117,7 @@ def login_view(request):
             })  
         else:
             login(request, user)
-            return redirect('reserva')
+            return redirect('reservar')
         
 
 
