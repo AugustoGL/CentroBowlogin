@@ -13,7 +13,9 @@
                         <p>{{ jugador.nombre }}</p>
                     {% endfor %}   
                 </div>
+                <h4>{{i.estado_reserva}}</h4>
                 <a href="{% url 'reserva' pk=i.pk %}">Más</a>
+
             </div>
         {% endfor %}
     {% else %}

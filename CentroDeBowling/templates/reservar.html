@@ -5,7 +5,7 @@
 
     <h2>Formulario de Reserva de Bowling</h2>
     
-    <form action="" method="post">
+    <form action="" method="post" class="form_reservar">
         {% csrf_token %}
         
         <label for="cantidad_personas">Cantidad de Personas (máximo 6):</label>
@@ -17,12 +17,10 @@
             <option value="5">5</option>
             <option value="6">6</option>
         </select>
-        <br>
-
         <div id="nombres_personas">
-            <!-- Este div se llenará dinámicamente con campos para los nombres y códigos -->
+            
         </div>
-
+        <br>
         <br>
         <label for="hora_reserva">Hora de la Reserva:</label>
         <select id="hora_reserva" name="hora_reserva" required>
