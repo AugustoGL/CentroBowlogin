@@ -13,6 +13,35 @@
     <title>BOWLING</title>
 </head>
 <body>
+  <header id="header" class="fixed-top d-flex align-items-center header-transparent">
+    <div class="container d-flex align-items-center justify-content-between">
+
+      <div class="logo">
+        <h1><a href="index.html">LMBowling</a></h1>
+        <!-- Uncomment below if you prefer to use an image logo -->
+        <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+      </div>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          {% if user.is_authenticated %}
+
+          <li><a class="nav-link scrollto active" href="/reservar">Reservar</a></li>
+          <li><a class="nav-link scrollto" href="{% url 'reservas' pk=request.user.pk %}">Reservas</a></li>
+          <li><a class="nav-link scrollto" href="{% url 'pedir' pk=request.user.pk %}">Pedir</a></li>
+          <li><a class="nav-link scrollto " href="/logout">Logout</a></li>
+
+          {% else %}
+
+          <li><a class="nav-link scrollto" href="/signup">Signup</a></li>
+          <li><a class="nav-link scrollto" href="/login">Login</a></li>
+
+          {% endif %}
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+
 <header>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
