@@ -15,7 +15,7 @@
             <br>
             <br>
             {% for pedido in pedidos %}
-                <h4>Pedido {{ forloop.counter }}</h4>
+                <h4>Pedido ${{ pedido.calcularTotal }}</h4>
                 {% for detalle in pedido.detalles.all %}
                     <p>{{ detalle }}</p>
                 {% endfor %}
