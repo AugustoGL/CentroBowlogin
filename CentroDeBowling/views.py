@@ -65,8 +65,9 @@ def reservar(request):
         if not pista_disponible:
             return HttpResponse('No hay pistas disponibles')
         """""""""
-
+        
         usuario = User.objects.get(id=request.user.pk)
+        
         # Capturar excepciones de integridad para manejar casos en los que la transacción falle
         try:
             reserva = Reserva.objects.create(
@@ -75,7 +76,7 @@ def reservar(request):
                 hora_reserva=Horarios.objects.get(id=hora_reserva_id),
                 pista=pista_disponible
             )
-
+            
             for nombre, codigo in zip(nombres_personas, codigos_personas):
                 jugador = Jugador.objects.create(nombre=nombre, resumido=codigo)
                 reserva.jugadores.add(jugador)
