@@ -32,7 +32,7 @@
         <br>
 
         <label for="dia_reserva">Día de la Reserva:</label>
-        <input type="date" id="dia_reserva" name="dia_reserva" required>
+        <input type="date" id="dia_reserva" name="dia_reserva" required min="{% now 'Y-m-d' %}">
         <br>
 
         <input type="submit" value="Enviar Reserva">

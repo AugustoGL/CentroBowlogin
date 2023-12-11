@@ -92,15 +92,36 @@ def reservar(request):
         horarios = Horarios.objects.all()
         return render(request, 'reservar.html', {'horarios': horarios})
 
-
-
 def reserva(request, pk):
     reserva = Reserva.objects.get(id=pk)
     usuario = User.objects.get(id=reserva.usuario)
+    pedidos = Pedido.objects.filter(reserva=pk) 
     if request.method == 'POST':
         reserva.estado_reserva = EstadoReserva.objects.get(pk=2)
         reserva.save()
-    return render(request, 'reserva.html', {'reserva': reserva, 'usuario': usuario})
+    return render(request, 'reserva.html', {'reserva': reserva, 'usuario': usuario, 'pedidos': pedidos})
+
+
+def pedir(request, pk):
+    reservas = Reserva.objects.filter(usuario=pk)
+    productos = Producto.objects.all()
+
+    if request.method == 'POST':
+        reserva_id = request.POST.get('reserva_id')
+        reserva = Reserva.objects.get(id=reserva_id)
+        pedido = Pedido.objects.create(reserva=reserva)
+        for producto in productos:
+            producto_pk = str(producto.pk)
+            cantidad = request.POST.get('producto_' + producto_pk)
+            if cantidad and cantidad != '0':
+                detalles_pedido = detallesPedido.objects.create(
+                    cantidad=cantidad,
+                    producto=producto
+                )
+                pedido.detalles.add(detalles_pedido)
+        return redirect('reserva', pk=reserva_id)
+    return render(request, 'pedir.html', {'reservas': reservas, 'productos': productos})
+
 
 def login_view(request):
     if request.method == 'GET':

@@ -10,6 +10,7 @@ urlpatterns = [
     path('reservar/',reservar,  name = 'reservar'),
     path('reservas/<int:pk>/',reservas,  name = 'reservas'),
     path('reserva/<int:pk>/',reserva,  name = 'reserva'),
+    path('pedir/<int:pk>/',pedir,  name = 'pedir'),
     path('logout/',logout_view,  name = 'logout'),
     path('login/',login_view,  name = 'login'),
 ]

@@ -29,6 +29,11 @@
           </li>
           
           <li class="nav-item">
+            <a class="nav-link" href="{% url 'pedir' pk=request.user.pk %}">Pedir</a>
+          </li>
+
+
+          <li class="nav-item">
             <a class="nav-link" href="/logout">Logout</a>
           </li>
           {% else %}

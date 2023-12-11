@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="" method="post" class="form_reservar">
+    {% csrf_token %}
+    <h3 for="">En qué reserva desea hacer el pedido</h3>
+    <select name="reserva_id" id="reserva_id">
+        {% for reserva in reservas %}
+            {% if reserva.estado_reserva.pk == 1 %}
+                <option value="{{ reserva.pk }}">{{ reserva.dia_reserva }} - {{ reserva.hora_reserva }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    <br>
+    <br>
+    <div class="productos">
+        <h3>Productos</h3>
+        {% for producto in productos %}
+            <div class="producto">
+                <label for="producto_{{ producto.pk }}">{{ producto.nombre }} - ${{ producto.precio }}</label>
+                <input name="producto_{{ producto.pk }}" type="number" placeholder="{{ producto.nombre }}">
+            </div>
+        {% endfor %}
+    </div>
+    <input type="submit" value="Enviar Reserva">
+</form>
+{% endblock %}

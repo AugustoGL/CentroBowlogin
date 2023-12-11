@@ -5,10 +5,24 @@
         <h2>Reserva para el dia {{ reserva.dia_reserva }}</h2>
         <h3>Reserva en la hora {{ reserva.hora_reserva}}</h3>
         <div class="jugadores">
-            <h3>Jugadores</h3>
+            <h3><u>Jugadores</u></h3>
             {% for jugador in reserva.jugadores.all %}
                 <p>{{ jugador.nombre }}, {{ jugador.resumido}}</p>
             {% endfor %}
+        </div>
+        <div class="pedidos">
+            <h3><u>Pedidos</u></h3>
+            <br>
+            <br>
+            {% for pedido in pedidos %}
+                <h4>Pedido {{ forloop.counter }}</h4>
+                {% for detalle in pedido.detalles.all %}
+                    <p>{{ detalle }}</p>
+                {% endfor %}
+                <br>
+                <br>
+            {% endfor %}
+            
         </div>
         <br>
         <h3>Estado de la reserva <u>{{reserva.estado_reserva}}</u></h3>
